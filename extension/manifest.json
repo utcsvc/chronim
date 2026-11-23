@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Chronim — Python Chrome Control",
+  "version": "0.1.0",
+  "description": "Connect Chrome to the Chronim Python automation bridge.",
+  "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' ws://127.0.0.1:8765" },
+  "permissions": ["activeTab", "tabs", "scripting", "storage", "debugger"],
+  "host_permissions": ["http://127.0.0.1:8765/*", "http://*/*", "https://*/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Chronim", "default_popup": "popup.html" },
+  "content_scripts": [{ "matches": ["http://*/*", "https://*/*"], "js": ["content.js"], "run_at": "document_idle" }]
+}

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Chronim</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M18.5 7.25A8 8 0 1 0 20 12"/><path d="M20 4v6h-6"/><path d="M8 12h8M12 8v8"/></svg>
+        </span>
+        <div><h1>Chronim</h1><p>Python <span>→</span> Bridge <span>→</span> Chrome</p></div>
+      </div>
+      <div class="connection" aria-live="polite">
+        <span id="dot" class="dot"></span>
+        <span id="status">Offline</span>
+      </div>
+    </header>
+
+    <section class="active-card" aria-labelledby="active-heading">
+      <div class="section-title">
+        <div><h2 id="active-heading">Active tab</h2><p id="page-title">Loading current page…</p></div>
+        <button id="capture" class="icon-button capture-button" type="button" title="Capture screenshot" aria-label="Capture screenshot">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6.5h3l1.2-1.7h5.6L14 6.5h3v9H3z"/><circle cx="10" cy="11" r="2.6"/></svg>
+        </button>
+      </div>
+      <form id="navigate-form" class="address-form">
+        <label class="sr-only" for="address">Website address</label>
+        <input id="address" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Enter a website address">
+        <button class="open-button" type="submit">Open</button>
+      </form>
+      <nav class="browser-controls" aria-label="Browser controls">
+        <button class="control-button" type="button" data-command="browser.back" aria-label="Go back" title="Back">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 4 2.5 9.5 8 15M3 9.5h8a5 5 0 0 1 5 5v1"/></svg><span>Back</span>
+        </button>
+        <button class="control-button" type="button" data-command="browser.forward" aria-label="Go forward" title="Forward">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m12 4 5.5 5.5L12 15m5.5-5.5h-8a5 5 0 0 0-5 5v1"/></svg><span>Forward</span>
+        </button>
+        <button class="control-button" type="button" data-command="browser.refresh" aria-label="Reload page" title="Reload">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 8A6.7 6.7 0 0 0 4.7 5.3L3 7m0 0V3.5M3 7h3.5M3.5 12A6.7 6.7 0 0 0 15.3 14.7L17 13m0 0v3.5M17 13h-3.5"/></svg><span>Reload</span>
+        </button>
+        <button id="new-tab" class="control-button" type="button" aria-label="Open new tab" title="New tab">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.5v13M3.5 10h13"/></svg><span>New tab</span>
+        </button>
+      </nav>
+      <div id="screenshot-wrap" class="screenshot-wrap" hidden>
+        <img id="screenshot" alt="Screenshot of the active tab">
+        <button id="hide-capture" type="button" class="text-button">Hide preview</button>
+      </div>
+    </section>
+
+    <section class="tabs-section" aria-labelledby="tabs-heading">
+      <div class="section-title tabs-heading">
+        <h2 id="tabs-heading">Tabs</h2>
+        <span id="tab-count" class="count">0 open</span>
+      </div>
+      <ul id="tabs-list" class="tabs-list" aria-live="polite"></ul>
+      <p id="empty-tabs" class="empty-state" hidden>No browser tabs found</p>
+    </section>
+
+    <details class="settings">
+      <summary>
+        <span class="settings-label"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="2.5"/><path d="m16.2 11.6 1.1.8-1.5 2.6-1.3-.5a6.5 6.5 0 0 1-1.4.8l-.2 1.4h-3l-.2-1.4a6.5 6.5 0 0 1-1.4-.8l-1.3.5-1.5-2.6 1.1-.8a6 6 0 0 1 0-1.6l-1.1-.8L7 6.6l1.3.5a6.5 6.5 0 0 1 1.4-.8l.2-1.4h3l.2 1.4a6.5 6.5 0 0 1 1.4.8l1.3-.5 1.5 2.6-1.1.8a6 6 0 0 1 0 1.6Z"/></svg>Connection settings</span>
+        <svg class="chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7.5 5 5 5-5"/></svg>
+      </summary>
+      <div class="settings-body">
+        <label for="key">API key</label>
+        <input id="key" type="password" autocomplete="off" placeholder="Paste your local Chronim key">
+        <div class="port-row"><label for="port">Bridge port</label><input id="port" type="number" min="1" max="65535" value="8765"></div>
+        <p class="hint">Copy it with <code>print(chronim.get_api_key())</code> in Python</p>
+        <div class="settings-actions">
+          <button id="save" class="save-button" type="button">Save and connect</button>
+          <button id="disconnect" class="disconnect-button" type="button">Disconnect</button>
+        </div>
+        <button id="connect" class="text-button reconnect-button" type="button" hidden>Reconnect with saved key</button>
+      </div>
+    </details>
+
+    <div id="error" class="error" role="status" aria-live="polite"></div>
+    <footer><span id="server">Local server unavailable</span><span>Chronim <b id="version">0.1.0</b></span></footer>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
